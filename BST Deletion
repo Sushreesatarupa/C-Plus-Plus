@@ -1,0 +1,156 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+	char data;
+	struct Node* right;
+	struct Node* left;
+};
+    
+struct Node* BSTSearch(char data,struct Node* root)
+{
+
+	if(root->data==data)
+	return NULL;
+	
+	if(root->right==NULL && root->left==NULL)
+	return root;
+	
+	if(root==NULL)
+	return NULL;
+	
+	if(data>root->data)
+	{
+		if(root->right==NULL)
+		return root;
+		
+		return BSTSearch(data,root->right);
+	}
+	else
+	{
+		if(root->left==NULL)
+		return root;
+		
+		return BSTSearch(data,root->left);
+	}	
+}
+
+struct Node* BSTInsert(struct Node* root,char data)
+{
+	struct Node* item=(struct Node *)malloc(sizeof(struct Node));
+	item->data=data; 
+	item->right=NULL; 
+	item->left=NULL;
+	
+	if(root==NULL)
+	return item;
+	
+	struct Node* found=BSTSearch(data,root);
+	if(found==NULL)
+		return root;
+	if(data>found->data)
+		found->right=item;
+	else
+		found->left=item;
+	
+	return root;	
+}
+void BSTInorderStack(struct Node* root,struct Node* arr[])
+{
+	struct Node* curr=root;
+	int top=-1;
+	while(curr||top>=0)
+	{
+		while(curr)
+		{
+			arr[++top]=curr;
+			curr=curr->left;
+		}
+		curr=arr[top];
+		top--;
+		printf("%c ",curr->data);
+		curr=curr->right;
+	}	
+}
+
+struct Node * minValueNode(struct Node* node) 
+{ 
+    struct Node* current = node; 
+
+    while (current && current->left != NULL) 
+        current = current->left; 
+  
+    return current; 
+} 
+  
+struct Node* deleteNode(struct Node* root, char key) 
+{ 
+    if (root == NULL) 
+		return root; 
+  
+    if (key < root->data) 
+        root->left = deleteNode(root->left, key); 
+  
+    else 
+	
+	if (key > root->data) 
+        root->right = deleteNode(root->right, key); 
+
+    else
+    { 
+        if (root->left == NULL) 
+        { 
+            struct Node *temp = root->right; 
+            free(root); 
+            return temp; 
+        } 
+        else if (root->right == NULL) 
+        { 
+            struct Node *temp = root->left; 
+            free(root); 
+            return temp; 
+        } 
+  
+        struct Node* temp = minValueNode(root->right); 
+        root->data = temp->data; 
+        root->right = deleteNode(root->right, temp->data); 
+    } 
+    return root; 
+} 
+  
+int main()
+{
+	struct Node* root=NULL;
+	struct Node* arr[1000];
+
+	root = BSTInsert(root, 'a'); 
+    root = BSTInsert(root, 'H'); 
+    root = BSTInsert(root, '0'); 
+    root = BSTInsert(root, 'z'); 
+    root = BSTInsert(root, 'Q'); 
+    root = BSTInsert(root, 'b'); 
+    root = BSTInsert(root, '8'); 
+  
+    printf("Inorder traversal of the given tree \n"); 
+    BSTInorderStack(root,arr); 
+  
+    printf("\nDeletion of node with degree 1 - 0\n"); 
+    root = deleteNode(root, '0'); 
+    printf("Inorder traversal of the modified tree \n"); 
+    BSTInorderStack(root,arr); 
+  
+    printf("\nDeletion of node with degree 0 - b\n"); 
+    root = deleteNode(root, 'b'); 
+    printf("Inorder traversal of the modified tree \n"); 
+    BSTInorderStack(root,arr); 
+  
+    printf("\nDeletion of node with degree 2 - H\n"); 
+    root = deleteNode(root, 'H'); 
+    printf("Inorder traversal of the modified tree \n"); 
+    BSTInorderStack(root,arr); 
+  
+    return 0; 
+     
+}
+
+   
